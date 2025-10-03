@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>СИСТЕМНЫЙ АРХИВ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+            background: #000;
+            color: #00ff00;
+        }
+
+        #welcomeScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ffafbd, #ffc3a0);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .happy-title {
+            font-size: 3em;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .cute-button {
+            background: #fff;
+            color: #ff6b6b;
+            border: 3px dashed #ff6b6b;
+            padding: 20px 40px;
+            font-size: 1.5em;
+            border-radius: 50px;
+            cursor: pointer;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 900;
+        }
+
+        #blackScreen { 
+            background: #000; 
+            color: #00ff00;
+            font-size: 2em;
+            text-align: center;
+        }
+
+        #whiteScreen { background: #fff; }
+        #redScreen { background: #ff0000; }
+
+        #horrorMode {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 800;
+        }
+
+        .horror-timer {
+            font-size: 8em;
+            color: #00ff00;
+            text-shadow: 0 0 20px #00ff00;
+            margin-bottom: 30px;
+        }
+
+        .horror-input {
+            background: #000;
+            color: #00ff00;
+            border: 2px solid #00ff00;
+            padding: 15px;
+            font-size: 1.5em;
+            width: 300px;
+            text-align: center;
+        }
+
+        .attempts-counter {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: #ff4444;
+            font-size: 1.2em;
+        }
+
+        #miniGame {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 700;
+        }
+
+        #gameCanvas {
+            border: 2px solid #00ff00;
+            background: #00CED1;
+        }
+
+        .wasd-hint {
+            color: #00ff00;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
+        .level-info {
+            color: #00ff00;
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+
+        #fioScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0a0a;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 500;
+        }
+
+        .fio-input {
+            background: #000;
+            color: #00ff00;
+            border: 1px solid #00aa00;
+            padding: 15px;
+            font-size: 1.2em;
+            width: 400px;
+            text-align: center;
+            margin: 20px;
+        }
+
+        #staticScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: none;
+            z-index: 400;
+        }
+
+        .static-noise {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(255,255,255,0.1) 2px,
+                    rgba(255,255,255,0.1) 4px
+                ),
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(255,255,255,0.05) 2px,
+                    rgba(255,255,255,0.05) 4px
+                );
+            animation: staticMove 0.1s infinite;
+        }
+
+        @keyframes staticMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(2px, 2px); }
+        }
+
+        #finalQRScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 300;
+        }
+
+        .qr-code {
+            width: 300px;
+            height: 300px;
+            border: 2px solid #00ff00;
+            background: #001100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #00ff00;
+            font-size: 1.2em;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="welcomeScreen">
+    </div>
+
+    <div id="finalQRScreen">
+        <div style="color: #00ff00; font-size: 1.5em; margin-bottom: 30px;">Доступ предоставлен</div>
+        <div class="qr-code">
+          <img src="https://ibb.co/QFsXcTZ0" width="280" height="280" alt="QR Code">
+    </div>
+
+    <script>
+        const CORRECT_CODE = "J578654";
+        const TOTAL_TIME = 30;
+        const MAX_ATTEMPTS = 4;
+
+        let timerInterval;
+        let timeLeft = TOTAL_TIME;
+        let attemptsLeft = MAX_ATTEMPTS;
+        let currentLevel = 1;
+        let gameActive = false;
+        let firstFIOEntered = false;
+
+        function startHorror() {
+            document.getElementById('welcomeScreen').style.display = 'none';
+            showScreen('blackScreen', 1000, () => {
+                document.getElementById('horrorMode').style.display = 'flex';
+                startTimer();
+            });
+        }
+
+        function startTimer() {
+            timeLeft = TOTAL_TIME;
+            updateTimer();
+            
+            timerInterval = setInterval(() => {
+                timeLeft -= 0.1;
+                if (timeLeft <= 0) endGame(false);
+                updateTimer();
+            }, 100);
+        }
+
+        function updateTimer() {
+            const timer = document.getElementById('timer');
+            timer.textContent = timeLeft.toFixed(1);
+            timer.style.color = timeLeft > 10 ? '#00ff00' : timeLeft > 5 ? '#ffff00' : '#ff4444';
+        }
+
+        function checkCode(event) {
+            if (event.key === 'Enter') {
+                const input = document.getElementById('codeInput');
+                const code = input.value.toLowerCase().trim();
+                
+                if (code === CORRECT_CODE) {
+                    startMiniGame();
+                } else {
+                    attemptsLeft--;
+                    document.getElementById('attemptsCount').textContent = attemptsLeft;
+                    input.value = '';
+                    if (attemptsLeft <= 0) endGame(false);
+                }
+            }
+        }
+
+        function startMiniGame() {
+            clearInterval(timerInterval);
+            document.getElementById('horrorMode').style.display = 'none';
+            
+            showScreen('blackScreen', 1000, () => {
+                document.getElementById('miniGame').style.display = 'flex';
+                currentLevel = 1;
+                document.getElementById('currentLevel').textContent = currentLevel;
+                initMazeGame();
+            });
+        }
+
+        function initMazeGame() {
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            const TILE_SIZE = 40;
+            const DICE_SIZE = 20;
+            const DICE_SPEED = 4;
+            
+            const dice = { x: 0, y: 0, size: DICE_SIZE, color: '#FFFFFF', speed: DICE_SPEED };
+            const exit = { x: 0, y: 0, width: 60, height: 40, color: '#FF0000' };
+
+            const levels = [
+                [
+                    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+                    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+                    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+                    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+                ],
+                [
+                    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+                    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+                    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+                    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+                ],
+                [
+                    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+                    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+                    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+                    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+                ],
+                [
+                    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+                    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+                    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+                    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+                ]
+            ];
+            
+            const maze = levels[currentLevel - 1];
+            const keys = {};
+            gameActive = true;
+
+            function findSafePosition() {
+                for (let y = 1; y < maze.length - 1; y++) {
+                    for (let x = 1; x < maze[0].length - 1; x++) {
+                        if (maze[y][x] === 0) {
+                            return { x: x * TILE_SIZE + 10, y: y * TILE_SIZE + 10 };
+                        }
+                    }
+                }
+                return { x: 60, y: 60 };
+            }
+
+            function findExitPosition() {
+                for (let y = 1; y < maze.length - 1; y++) {
+                    for (let x = maze[0].length - 2; x > 1; x--) {
+                        if (maze[y][x] === 0) {
+                            return { x: x * TILE_SIZE - 20, y: y * TILE_SIZE - 10 };
+                        }
+                    }
+                }
+                return { x: 700, y: 100 };
+            }
+
+            const startPos = findSafePosition();
+            const exitPos = findExitPosition();
+            
+            dice.x = startPos.x;
+            dice.y = startPos.y;
+            exit.x = exitPos.x;
+            exit.y = exitPos.y;
+            
+            function gameLoop() {
+                if (!gameActive) return;
+                
+                ctx.fillStyle = '#00CED1';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                drawMaze();
+                
+                ctx.fillStyle = exit.color;
+                ctx.fillRect(exit.x, exit.y, exit.width, exit.height);
+                
+                drawDice();
+                
+                const prevX = dice.x;
+                const prevY = dice.y;
+                
+                if (keys['w'] || keys['ArrowUp']) dice.y -= dice.speed;
+                if (keys['s'] || keys['ArrowDown']) dice.y += dice.speed;
+                if (keys['a'] || keys['ArrowLeft']) dice.x -= dice.speed;
+                if (keys['d'] || keys['ArrowRight']) dice.x += dice.speed;
+                
+                if (checkWallCollision(dice.x, dice.y, dice.size)) {
+                    dice.x = prevX;
+                    dice.y = prevY;
+                    gameOver();
+                    return;
+                }
+                
+                if (dice.x < exit.x + exit.width &&
+                    dice.x + dice.size > exit.x &&
+                    dice.y < exit.y + exit.height &&
+                    dice.y + dice.size > exit.y) {
+                    nextLevel();
+                    return;
+                }
+                
+                requestAnimationFrame(gameLoop);
+            }
+            
+            function drawMaze() {
+                ctx.fillStyle = '#000000';
+                for (let y = 0; y < maze.length; y++) {
+                    for (let x = 0; x < maze[y].length; x++) {
+                        if (maze[y][x] === 1) {
+                            ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                        }
+                    }
+                }
+            }
+            
+            function drawDice() {
+                ctx.fillStyle = dice.color;
+                ctx.fillRect(dice.x, dice.y, dice.size, dice.size);
+                ctx.strokeStyle = '#000000';
+                ctx.strokeRect(dice.x, dice.y, dice.size, dice.size);
+                
+                ctx.fillStyle = '#000000';
+                const dotSize = 2;
+                
+                ctx.beginPath();
+                ctx.arc(dice.x + dice.size/2, dice.y + dice.size/2, dotSize, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.beginPath();
+                ctx.arc(dice.x + dice.size/4, dice.y + dice.size/4, dotSize, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.beginPath();
+                ctx.arc(dice.x + 3*dice.size/4, dice.y + 3*dice.size/4, dotSize, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            function checkWallCollision(x, y, size) {
+                const points = [
+                    {x: x, y: y},
+                    {x: x + size, y: y},
+                    {x: x, y: y + size},
+                    {x: x + size, y: y + size}
+                ];
+                
+                for (let point of points) {
+                    const mazeX = Math.floor(point.x / TILE_SIZE);
+                    const mazeY = Math.floor(point.y / TILE_SIZE);
+                    
+                    if (mazeY >= 0 && mazeY < maze.length && 
+                        mazeX >= 0 && mazeX < maze[0].length &&
+                        maze[mazeY][mazeX] === 1) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            
+            function nextLevel() {
+                gameActive = false;
+                currentLevel++;
+                if (currentLevel <= 4) {
+                    document.getElementById('currentLevel').textContent = currentLevel;
+                    showScreen('blackScreen', 1000, () => {
+                        gameActive = true;
+                        initMazeGame();
+                    });
+                } else {
+                    showScreen('blackScreen', 1000, () => {
+                        startFIOPhase();
+                    });
+                }
+            }
+            
+            function gameOver() {
+                gameActive = false;
+                showScreen('blackScreen', 2000, () => {
+                    endGame(false);
+                });
+            }
+            
+            window.addEventListener('keydown', (e) => {
+                if (gameActive) {
+                    keys[e.key] = true;
+                }
+            });
+            
+            window.addEventListener('keyup', (e) => {
+                if (gameActive) {
+                    keys[e.key] = false;
+                }
+            });
+            
+            gameLoop();
+        }
+
+        function startFIOPhase() {
+            document.getElementById('miniGame').style.display = 'none';
+            document.getElementById('fioScreen').style.display = 'flex';
+            firstFIOEntered = false;
+        }
+
+        function checkFIO(event) {
+            if (event.key === 'Enter') {
+                const input = document.getElementById('fioInput');
+                const fio = input.value.trim();
+                
+                const words = fio.split(' ').filter(word => word.length > 0);
+                const isValid = words.length >= 3 && 
+                               words.every(word => /^[А-Я][а-я]*$/.test(word));
+                
+                if (isValid) {
+                    if (!firstFIOEntered) {
+                        firstFIOEntered = true;
+                        const blackScreen = document.getElementById('blackScreen');
+                        blackScreen.innerHTML = 'это ведь не твои данные, верно?';
+                        blackScreen.style.display = 'flex';
+                        
+                        setTimeout(() => {
+                            blackScreen.style.display = 'none';
+                            document.getElementById('fioScreen').style.display = 'flex';
+                            document.getElementById('fioInput').value = '';
+                        }, 3000);
+                    } else {
+                        document.getElementById('fioScreen').style.display = 'none';
+                        
+                        showScreen('redScreen', 200, () => {
+                            showScreen('whiteScreen', 3000, () => {
+                                document.getElementById('staticScreen').style.display = 'block';
+                                setTimeout(() => {
+                                    document.getElementById('staticScreen').style.display = 'none';
+                                    showFinalQR();
+                                }, 7000);
+                            });
+                        });
+                    }
+                } else {
+                    input.style.borderColor = '#ff4444';
+                    setTimeout(() => input.style.borderColor = '#00aa00', 1000);
+                }
+            }
+        }
+
+        function showFinalQR() {
+            document.getElementById('finalQRScreen').style.display = 'flex';
+        }
+
+        function showScreen(screenId, duration, callback) {
+            const screen = document.getElementById(screenId);
+            screen.style.display = 'flex';
+            
+            setTimeout(() => {
+                screen.style.display = 'none';
+                if (callback) callback();
+            }, duration);
+        }
+
+        function endGame(isWin) {
+            clearInterval(timerInterval);
+            document.getElementById('horrorMode').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
