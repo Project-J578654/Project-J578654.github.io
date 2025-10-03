@@ -15,6 +15,8 @@
             overflow: hidden;
             background: #000;
             color: #00ff00;
+            width: 100vw;
+            height: 100vh;
         }
 
         #welcomeScreen {
@@ -242,13 +244,49 @@
     </style>
 </head>
 <body>
+    <!-- 🎀 МИЛАЯ ПРИМАНКА -->
     <div id="welcomeScreen">
+        <div class="happy-title">🎮 Давай поиграем в весёлую игру! 🎮</div>
+        <button class="cute-button" onclick="startHorror()">Начать игру!</button>
     </div>
 
+    <!-- ⚡ ЭКРАНЫ ПЕРЕХОДА -->
+    <div id="blackScreen" class="fullscreen"></div>
+    <div id="whiteScreen" class="fullscreen"></div>
+    <div id="redScreen" class="fullscreen"></div>
+
+    <!-- 💀 ХОРРОР-РЕЖИМ -->
+    <div id="horrorMode">
+        <div class="attempts-counter">Попытки: <span id="attemptsCount">4</span></div>
+        <div class="horror-timer" id="timer">30.0</div>
+        <input type="text" class="horror-input" id="codeInput" placeholder="Введите код..." onkeypress="checkCode(event)">
+    </div>
+
+    <!-- 🎮 МИНИ-ИГРА -->
+    <div id="miniGame">
+        <div class="wasd-hint">Уровень: <span id="currentLevel">1</span>/4 - Управление: WASD</div>
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <div class="level-info">Дойди до красного выхода, не касаясь стен!</div>
+    </div>
+
+    <!-- 📝 ФИО ВВОД -->
+    <div id="fioScreen">
+        <div style="color: #00ff00; font-size: 1.5em; margin-bottom: 30px;">Введите ваши данные</div>
+        <input type="text" class="fio-input" id="fioInput" placeholder="Фамилия Имя Отчество" onkeypress="checkFIO(event)">
+        <div style="color: #00aa00; font-size: 0.9em; margin-top: 10px;">Три слова с заглавных букв</div>
+    </div>
+
+    <!-- 📺 ЭКРАН ПОМЕХ -->
+    <div id="staticScreen">
+        <div class="static-noise"></div>
+    </div>
+
+    <!-- 🎯 ФИНАЛЬНЫЙ QR -->
     <div id="finalQRScreen">
         <div style="color: #00ff00; font-size: 1.5em; margin-bottom: 30px;">Доступ предоставлен</div>
         <div class="qr-code">
-          <img src="https://ibb.co/QFsXcTZ0" width="280" height="280" alt="QR Code">
+            <img src="https://ibb.co/QFsXcTZ0" width="280" height="280" alt="QR Code">
+        </div>
     </div>
 
     <script>
@@ -291,7 +329,7 @@
         function checkCode(event) {
             if (event.key === 'Enter') {
                 const input = document.getElementById('codeInput');
-                const code = input.value.toLowerCase().trim();
+                const code = input.value.toUpperCase().trim();
                 
                 if (code === CORRECT_CODE) {
                     startMiniGame();
